@@ -2,9 +2,8 @@
 import User from "../models/usermodel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import nodemailer from "nodemailer";
-import { log } from "console";
+
+
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -35,10 +34,13 @@ export const register = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
+        
+
         return res.json({success: true, message: "User registered successfully" });
 
     } catch (error) {
-        return res.json({success: false, message: "Internal Server Error" });
+        console.error("Registration error:", error);
+        return res.json({success: false, error: error.message, message: "Internal Server Error" });
     }
 }
 
@@ -72,7 +74,8 @@ export const login = async (req, res) => {
         return res.json({success: true, message: "User logged in successfully" });
 
     } catch (error) {
-        return res.json({success: false, message: "Internal Server Error" });
+        console.error("Login error:", error);
+        return res.json({success: false, error: error.message, message: "Internal Server Error" });
     }   
 }
 
