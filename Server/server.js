@@ -5,7 +5,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/mongodb.js';
-import authRoutes from './routes/authoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
