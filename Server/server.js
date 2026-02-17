@@ -10,6 +10,8 @@ import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
+// Trust Render's reverse proxy
+app.set('trust proxy', 1);
 
 connectDB();
 
