@@ -1,5 +1,5 @@
 // in this file we will write the logic for the authentication of the user like register, login, logout ,verify email, forgot password, reset password etc
-import User from "../models/usermodel.js";
+import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js";
