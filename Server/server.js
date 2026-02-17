@@ -15,6 +15,13 @@ app.set('trust proxy', 1);
 
 connectDB();
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
 // Rate limiter - max 100 requests per 15 minutes per IP
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -31,7 +38,12 @@ const authLimiter = rateLimit({
 
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'https://authify-full-stack-authentication-system-jat5.onrender.com'],
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }));
 app.use(bodyParser.json());

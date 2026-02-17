@@ -39,7 +39,7 @@ export const register = async (req, res) => {
 
         //sending welcome email to the user after registration
         const mailOptions = {
-            from: process.env.SENDER_EMAIL,
+            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
             to: email, 
             subject: "Welcome to our application",
             text: `Hello ${name},\n\nThank you for registering on our application! We're excited to have you on board.\n\nBest regards,\nThe Team Yaman`
@@ -126,7 +126,7 @@ export const sendVerifyOtp = async (req, res) => {
         await user.save();
 
         const mailOptions = {
-            from: process.env.SENDER_EMAIL,
+            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
             to: user.email, //why user.email because we want to send the email to the user who is trying to verify their email address
             subject: "Email Verification",
             // text: `Hello ${user.name},\n\nYour OTP for email verification is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nBest regards,\nThe Team Yaman`
@@ -195,7 +195,7 @@ export const resetPassword = async (req, res) => {
         user.resetOtpExpiryAt = Date.now() + 10 * 60 * 1000;
         await user.save();
         const mailOptions = {
-            from: process.env.SENDER_EMAIL,
+            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
             to: email,
             subject: "Password Reset OTP",
             // text: `Hello ${user.name},\n\nYour OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nBest regards,\nThe Team Yaman`
