@@ -40,7 +40,7 @@ export const AppContextProvider = ({ children }) => {
                 setUserData(data.userData);
             }
         } catch (error) {
-            console.log("Error fetching user data");
+            // ...existing code...
         }
     };
 

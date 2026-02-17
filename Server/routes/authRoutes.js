@@ -13,7 +13,7 @@ router.post('/send-verify-otp',  userAuth , sendVerifyOtp);
 router.post('/verify-email-otp', userAuth, verifyEmailOtp);
 router.post('/is-authenticated', userAuth, isAuthenticated);
 router.post('/reset-password', resetPassword);
-router.post('/verify-reset-password-otp', verifyResetPasswordOtp);
+router.post('/verify-reset-password-otp',verifyResetPasswordOtp);
 router.post('/user-data', userAuth, getUserData);
 
 export default router;

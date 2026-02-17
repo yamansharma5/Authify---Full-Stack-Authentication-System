@@ -9,6 +9,15 @@ const transporter = nodemailer.createTransport({
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
     }
-})
+});
+
+// Verify transporter configuration on startup
+transporter.verify((error, success) => {
+    if (error) {
+        // ...existing code...
+    } else {
+        // ...existing code...
+    }
+});
 
 export default transporter;

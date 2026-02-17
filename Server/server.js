@@ -15,13 +15,6 @@ app.set('trust proxy', 1);
 
 connectDB();
 
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5175',
-    process.env.FRONTEND_URL
-].filter(Boolean);
-
 // Rate limiter - max 100 requests per 15 minutes per IP
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -38,12 +31,7 @@ const authLimiter = rateLimit({
 
 app.use(express.json());
 app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        return callback(new Error('Not allowed by CORS'));
-    },
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'https://authify-full-stack-authentication-system-7eac-b8vqbhfdk.vercel.app'],
     credentials: true
 }));
 app.use(bodyParser.json());
@@ -62,7 +50,7 @@ app.use('/api/auth', authLimiter, authRoutes);// Mounts the authRoutes router on
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    // ...existing code...
 });
 
 

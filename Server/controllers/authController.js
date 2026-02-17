@@ -24,7 +24,7 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         // Hashes the user's password using bcrypt with a salt round of 10 for security.
-        console.log(hashedPassword);
+        // ...existing code...
         
         const newUser = new User({ name, email, password: hashedPassword });
         await newUser.save();
@@ -32,14 +32,14 @@ export const register = async (req, res) => {
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
         //sending welcome email to the user after registration
         const mailOptions = {
-            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
+            from: process.env.SENDER_EMAIL,
             to: email, 
             subject: "Welcome to our application",
             text: `Hello ${name},\n\nThank you for registering on our application! We're excited to have you on board.\n\nBest regards,\nThe Team Yaman`
@@ -48,13 +48,13 @@ export const register = async (req, res) => {
         try {
             await transporter.sendMail(mailOptions);
         } catch (emailError) {
-            console.error("Welcome email failed:", emailError.message);
+            // ...existing code...
         }
         
         return res.json({success: true, message: "User registered successfully" });
 
     } catch (error) {
-        console.error("Registration error:", error);
+        // ...existing code...
         return res.json({success: false, error: error.message, message: "Internal Server Error" });
     }
 }
@@ -81,15 +81,15 @@ export const login = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         
         return res.json({success: true, message: "User logged in successfully" });
 
     } catch (error) {
-        console.error("Login error:", error);
+        // ...existing code...
         return res.json({success: false, error: error.message, message: "Internal Server Error" });
     }   
 }
@@ -98,8 +98,8 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        secure: true,
-        sameSite: "none"
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     });
     return res.json({success: true, message: "User logged out successfully" });
 }
@@ -126,18 +126,20 @@ export const sendVerifyOtp = async (req, res) => {
         await user.save();
 
         const mailOptions = {
-            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
+            from: process.env.SENDER_EMAIL,
             to: user.email, //why user.email because we want to send the email to the user who is trying to verify their email address
             subject: "Email Verification",
             // text: `Hello ${user.name},\n\nYour OTP for email verification is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nBest regards,\nThe Team Yaman`
             html: EMAIL_VERIFY_TEMPLATE.replace("{{name}}", user.name).replace("{{otp}}", otp).replace("{{email}}", user.email)
         };
         await transporter.sendMail(mailOptions);
+        // ...existing code...
 
         return res.json({success: true, message: "OTP sent to email successfully" });
 
     } catch (error) {
-        return res.json({success: false, error: error.message, message: "Internal Server Error" });
+        // ...existing code...
+        return res.json({success: false, error: error.message, message: "Failed to send OTP email" });
     } 
 }
 
@@ -195,7 +197,7 @@ export const resetPassword = async (req, res) => {
         user.resetOtpExpiryAt = Date.now() + 10 * 60 * 1000;
         await user.save();
         const mailOptions = {
-            from: process.env.SENDER_EMAIL || process.env.SMTP_USER,
+            from: process.env.SENDER_EMAIL,
             to: email,
             subject: "Password Reset OTP",
             // text: `Hello ${user.name},\n\nYour OTP for password reset is: ${otp}\n\nThis OTP is valid for 10 minutes.\n\nBest regards,\nThe Team Yaman`

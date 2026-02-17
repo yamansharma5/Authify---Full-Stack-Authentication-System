@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 
 const userAuth = (req, res, next) => {
     const {token} = req.cookies;
+    // ...existing code...
+    
     if (!token) {
         return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
     }  
@@ -10,6 +12,7 @@ const userAuth = (req, res, next) => {
         const tokendecode = jwt.verify(token, process.env.JWT_SECRET);
         
         if(tokendecode.id){
+            req.userId = tokendecode.id;
             if (!req.body) req.body = {};
             req.body.userId = tokendecode.id;
         }
@@ -20,6 +23,7 @@ const userAuth = (req, res, next) => {
 
 
     } catch (error) {
+        // ...existing code...
         return res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });
     }
 };
