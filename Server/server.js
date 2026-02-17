@@ -14,7 +14,7 @@ connectDB();
 
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'https://authify-full-stack-authentication-system-jat5.onrender.com'],
     credentials: true
 }));
 app.use(bodyParser.json());
@@ -30,8 +30,9 @@ app.use('/api/auth', authRoutes);// Mounts the authRoutes router on the /api/aut
 
 
 
-app.listen(3000, () => {
-    console.log(`Server is running on port ${3000}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 
 
