@@ -31,7 +31,7 @@ const authLimiter = rateLimit({
 
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'https://authify-full-stack-authentication-system-7eac-b8vqbhfdk.vercel.app'],
+    origin: ['https://authify-full-stack-authentication-s-xi.vercel.app'],
     credentials: true
 }));
 app.use(bodyParser.json());
