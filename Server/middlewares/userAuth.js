@@ -7,10 +7,11 @@ const userAuth = (req, res, next) => {
         return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
     }  
     try {
-        const tokendecode = jwt.verify(token, process.env.JWT_SECRET);// Verifies the token using the secret key and decodes the user information from it.
+        const tokendecode = jwt.verify(token, process.env.JWT_SECRET);
         
-        if(tokendecode.id){// Checks if the decoded token contains a valid user ID. If it does, it attaches the user ID to the request body for further use in the route handlers.
-            req.body.userId = tokendecode.id;       // Attaches the decoded user ID to the request body for further use in the route handlers.
+        if(tokendecode.id){
+            if (!req.body) req.body = {};
+            req.body.userId = tokendecode.id;
         }
         else{
             return res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });

@@ -31,7 +31,7 @@ export const register = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",// Ensures the cookie is only sent in requests originating from the same site, providing protection against CSRF attacks.
+            sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -43,7 +43,11 @@ export const register = async (req, res) => {
             text: `Hello ${name},\n\nThank you for registering on our application! We're excited to have you on board.\n\nBest regards,\nThe Team Yaman`
         };
 
-        await transporter.sendMail(mailOptions);
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (emailError) {
+            console.error("Welcome email failed:", emailError.message);
+        }
         
         return res.json({success: true, message: "User registered successfully" });
 
@@ -76,7 +80,7 @@ export const login = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         
@@ -93,7 +97,7 @@ export const logout = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",  
-        sameSite: "strict"
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
     });
     return res.json({success: true, message: "User logged out successfully" });
 }
@@ -103,6 +107,11 @@ export const sendVerifyOtp = async (req, res) => {
     try {
         const{userId} = req.body;
         const user = await User.findById(userId);
+
+        if(!user) {
+            return res.json({success: false, message: "User not found" });
+        }
+
         if(user.isAccountVerified === true){
             return res.json({success: true, message: "Email Already verified successfully" });
         }
@@ -222,4 +231,27 @@ export const verifyResetPasswordOtp = async (req, res) => {
         return res.json({success: false, error: error.message, message: "Internal Server Error" });
     }
 }
+
+// Get user data
+export const getUserData = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        return res.json({
+            success: true,
+            userData: {
+                name: user.name,
+                email: user.email,
+                isAccountVerified: user.isAccountVerified
+            }
+        });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+};
         
